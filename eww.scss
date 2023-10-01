@@ -1,0 +1,74 @@
+* {
+  all: unset; //Unsets everything so you can style everything from scratch
+}
+
+//Global Styles
+.bar {
+  margin-top: 2px;
+}
+
+.horizontal {
+  background-color: #494949;
+  border-radius: 8px;
+  color: #b0b4bc;
+  padding: 5px 15px;
+
+  .workspaces-widget {
+    .horizontal {
+      padding: 1px;
+    }
+  }
+}
+
+// Styles on classes (see eww.yuck for more information)
+
+.metrics {
+}
+
+.metrics slider {
+  all: unset;
+  color: #ffd5cd;
+}
+
+.metric scale trough highlight {
+  all: unset;
+  background-color: #d35d6e;
+  color: #000000;
+  border-radius: 10px;
+}
+.metric scale trough {
+  all: unset;
+  background-color: #4e4e4e;
+  border-radius: 50px;
+  min-height: 3px;
+  min-width: 50px;
+  margin-left: 10px;
+  margin-right: 20px;
+}
+.metric scale trough highlight {
+  all: unset;
+  background-color: #d35d6e;
+  color: #000000;
+  border-radius: 10px;
+}
+.metric scale trough {
+  all: unset;
+  background-color: #4e4e4e;
+  border-radius: 50px;
+  min-height: 3px;
+  min-width: 50px;
+  margin-left: 10px;
+  margin-right: 20px;
+}
+.label-ram {
+  font-size: large;
+}
+
+.current {
+  color: #8888ff;
+  font-weight: 600;
+}
+
+.workspace-widget:hover {
+  color: red;
+}

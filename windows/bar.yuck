@@ -1,0 +1,83 @@
+; (include "./widgets/current-workspace.yuck")
+; (include "~/.config/eww/windows/widgets/metric.yuck")
+; (include "~/.config/eww/windows/widgets/music.yuck")
+; (include "~/.config/eww/windows/widgets/workspaces.yuck")
+
+(defwidget bar []
+  (centerbox :orientation "h"
+    (workspaces)
+    ; (window_w)
+    (music)
+    (metrics)))
+
+(deflisten workspaces :initial "[]" "sh ~/.config/eww/scripts/get-workspaces")
+(deflisten current_workspace :initial "1" "sh ~/.config/eww/scripts/get-active-workspace")
+(defwidget workspaces []
+  (eventbox :onscroll "sh ~/.config/eww/scripts/change-active-workspace {} ${current_workspace}" 
+            :class "workspaces-widget"
+    (box  :space-evenly false
+          :spacing 20
+      (label :text "${workspaces}${current_workspace}" :visible false)
+      (for workspace in workspaces
+        (eventbox :class "workspace-widget" :onclick "hyprctl dispatch workspace ${workspace.id}"
+          (box :class "workspace-entry ${workspace.id == current_workspace ? "current" : ""} ${workspace.windows > 0 ? "occupied" : "empty"}"
+            (label :text "${workspace.id}")
+          )
+        )
+      )
+    )
+  )
+)
+
+(defwidget music []
+  (box :class "music"
+       :orientation "h"
+       :space-evenly false
+       :halign "center"
+    {music != "" ? "🎵${music}" : ""}
+  )
+)
+
+(deflisten music :initial ""
+  "playerctl --follow metadata --format '{{ artist }} - {{ title }}' || true")
+
+(defwidget metric [label value onchange]
+  (box :orientation "h"
+       :class "metric"
+       :space-evenly false
+    (box :class "label" label)
+    (scale :min 0
+           :max 101
+           :active {onchange != ""}
+           :value value
+           :onchange onchange
+    )
+  )
+)
+
+(defwidget metrics []
+  (box :class "metrics" :orientation "h" :space-evenly false :halign "end"
+    (metric :label "RAM"
+            :value {EWW_RAM.used_mem_perc}
+            :onchange "")
+    (metric :label "💾"
+            :value {round((1 - (EWW_DISK["/"].free / EWW_DISK["/"].total)) * 100, 0)}
+            :onchange "")
+    time))
+
+(defpoll volume :interval "1s"
+  "scripts/get-vol")
+
+(defpoll time :interval "10s"
+  "date '+%H:%M %d %b, %Y'")
+
+(defwindow bar
+  :monitor 0
+  :windowtype "dock"
+  :geometry (geometry :x "0%"
+                      :y "5px"
+                      :width "97%"
+                      :height "20px"
+                      :anchor "top center")
+  :exclusive true
+  (bar))
