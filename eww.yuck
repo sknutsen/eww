@@ -1,1 +1,6 @@
-(include "./windows/bar.yuck")
+(include "windows/bar.yuck")
+
+(include "widgets/current-workspace.yuck")
+(include "widgets/metric.yuck")
+(include "widgets/music.yuck")
+(include "widgets/workspaces.yuck")

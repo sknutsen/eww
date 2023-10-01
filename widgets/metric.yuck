@@ -1,0 +1,67 @@
+(defwidget metric [label value onchange]
+  (box :orientation "h"
+       :class "metric"
+       :space-evenly false
+    (box :class "label" label)
+    (scale :min 0
+           :max 101
+           :active {onchange != ""}
+           :value value
+           :onchange onchange
+    )
+  )
+)
+
+(defwidget metrics []
+  (box :class "metrics" :orientation "h" :space-evenly false :halign "end"
+    (metric :label "RAM"
+            :value {EWW_RAM.used_mem_perc}
+            :onchange "")
+    (metric :label "💾"
+            :value {round((1 - (EWW_DISK["/"].free / EWW_DISK["/"].total)) * 100, 0)}
+            :onchange "")
+    time
+  )
+)
+
+(defpoll volume :interval "1s"
+  "scripts/get-vol")
+
+(defpoll time :interval "10s"
+  "date '+%H:%M %d %b, %Y'")
+
+(defwidget monitoring_item [value icon class]
+  (box :class "monitoring-item ${class}"
+    (circular-progress :value value :thickness 7 :start-at 75
+      (overlay :valign "center"
+        (label :class "monitoring-icon" :text icon)
+      )
+    )
+  )
+)
+
+(defwidget cpu []
+  (monitoring_item :value {round(EWW_CPU.avg, 0)} :icon "CPU" :class "cpu")
+)
+
+(defwidget ram []
+  (monitoring_item :value {round(EWW_RAM.used_mem_perc, 0)} :icon "RAM" :class "ram")
+)
+
+(defwidget disk []
+  (monitoring_item :value {round(EWW_DISK["/"].used_perc, 0)} :icon "Disk" :class "disk")
+)
+
+(defwidget temp []
+  (monitoring_item :value {round(EWW_TEMPS.CORETEMP_PACKAGE_ID_0, 0)} :icon "Temp" :class "temp")
+)
+
+(defwidget monitoring []
+  (box :orientation "h" :class "monitoring-box"
+    (cpu)
+    (ram)
+    (disk)
+    (temp)
+    time
+  )
+)
